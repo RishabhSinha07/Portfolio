@@ -8,6 +8,7 @@ import { RepoRow } from "./components/RepoRow.jsx";
 import { Filters } from "./components/Filters.jsx";
 import { SkeletonRow } from "./components/Skeleton.jsx";
 import { ErrorState } from "./components/ErrorState.jsx";
+import { Writing } from "./components/Writing.jsx";
 import { Footer } from "./components/Footer.jsx";
 
 // ─── App ─────────────────────────────────────────────────────────────────
@@ -203,6 +204,8 @@ export default function App() {
           </div>
         )}
       </Reveal>
+
+      <Writing index={3} />
 
       <Footer />
     </div>
