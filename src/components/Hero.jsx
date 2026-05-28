@@ -87,7 +87,8 @@ const hero = {
     fontSize: 14,
     lineHeight: 1.65,
     color: "var(--text-2)",
-    maxWidth: "60ch",
+    // No maxWidth — span the same width as the name and title above for a
+    // balanced hero block.
     textWrap: "pretty",
     fontWeight: 400,
   },

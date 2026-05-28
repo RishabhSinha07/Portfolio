@@ -87,3 +87,137 @@ a {
     animation: none;
   }
 }
+
+/* ─── Projects table ──────────────────────────────────────────────── */
+.proj-head,
+.proj-row {
+  display: grid;
+  /* Project column is a fixed-ish narrow band so it doesn't fight Detail for
+     space. Detail takes everything else. */
+  grid-template-columns: minmax(160px, 220px) 1fr;
+  gap: 36px;
+  padding: 18px 16px;
+  margin-left: -16px;
+  margin-right: -16px;
+  align-items: baseline;
+}
+
+.proj-head {
+  border-bottom: 1px solid var(--border);
+  padding-top: 10px;
+  padding-bottom: 12px;
+}
+
+.proj-head-cell {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--text-2);
+  text-transform: uppercase;
+}
+
+.proj-row {
+  border-top: 1px solid var(--border);
+  transition: background 150ms ease;
+}
+.proj-row:first-of-type {
+  border-top: none;
+}
+.proj-row:hover {
+  background: var(--hover);
+}
+.proj-row:hover .proj-name {
+  color: var(--accent);
+}
+.proj-row:hover .proj-arrow {
+  opacity: 1;
+  transform: translate(0, 0);
+  color: var(--accent);
+}
+
+.proj-name-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0; /* let the grid cell shrink instead of overflowing */
+}
+.proj-name {
+  font-family: var(--f-disp);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  transition: color 150ms ease;
+  /* Long repo names (e.g. phoneArena_phoneSpecs_scraping) must wrap, not push
+     into the Detail column. */
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  min-width: 0;
+}
+.proj-arrow {
+  display: inline-flex;
+  color: var(--text-2);
+  opacity: 0;
+  transform: translate(-4px, 4px);
+  transition:
+    color 150ms ease,
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+.proj-detail {
+  font-family: var(--f-mono);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-2);
+  font-weight: 400;
+  text-wrap: pretty;
+  min-width: 0; /* sibling fix for the grid cell */
+}
+.proj-detail--empty {
+  color: #333;
+}
+
+.proj-table-foot {
+  height: 1px;
+  background: var(--border);
+  margin-left: -16px;
+  margin-right: -16px;
+}
+
+.proj-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  color: var(--text-2);
+  font-family: var(--f-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+.proj-toggle:hover,
+.proj-toggle:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+.proj-toggle-caret {
+  font-size: 11px;
+  line-height: 1;
+}
+
+@media (max-width: 640px) {
+  .proj-head {
+    display: none;
+  }
+  .proj-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}

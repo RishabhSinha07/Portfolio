@@ -8,8 +8,7 @@ Linear, Vercel, and rauno.me.
 - Dark `#080808` background, hairline borders, a single electric-blue accent
   (`#0066FF`) used only on hover.
 - Syne for the display name, IBM Plex Mono everywhere else.
-- Projects as a clean vertical list (no cards, no shadows) with a `FEATURED`
-  section above for pinned repos.
+- Projects as a clean vertical list (no cards, no shadows).
 - Search, language filter tabs, and sort (Recent / Stars / Forks).
 - Loading skeletons, and graceful rate-limit / not-found / fetch-failed states
   with retry.
@@ -29,6 +28,24 @@ npm run build    # production build to dist/
 npm run preview  # preview the production build
 ```
 
+## Deploy (Vercel)
+
+The repo includes a `vercel.json` so Vercel auto-detects Vite.
+
+Easiest path — **one-click GitHub import**:
+
+1. Go to <https://vercel.com/new>, sign in with GitHub.
+2. Pick the `Portfolio` repo and click **Import**.
+3. Leave every setting at default (Framework: Vite, Build: `npm run build`, Output: `dist`).
+4. Click **Deploy**. The site goes live at `<project>.vercel.app`, and every push to `main` auto-redeploys.
+
+Or via the CLI:
+
+```bash
+npx vercel              # first run prompts login + project setup
+npx vercel --prod       # subsequent deploys to production
+```
+
 ## Configure
 
 Edit [`src/config.js`](src/config.js):
@@ -41,14 +58,12 @@ export const CONFIG = {
   bio: "…",                       // falls back to your GitHub bio if set
   linkedin: "https://www.linkedin.com/in/rishabh-sinha-99a706164/",
   email: "rishabhsinha220@gmail.com",
-  pinnedRepos: [],                // e.g. ["repo-a", "repo-b"] to feature at top
   accentColor: "#0066FF",
 };
 ```
 
-`pinnedRepos` lists repo names to surface in the `FEATURED` section (fetched
-individually if they're outside the 30 most-recently-updated). The hero pulls
-your avatar, name, and bio from the GitHub API, falling back to `CONFIG`.
+The hero pulls your avatar, name, and bio from the GitHub API, falling back to
+`CONFIG` when those fields are empty on your profile.
 
 > Note: unauthenticated GitHub API calls are limited to 60/hour per IP. The app
 > surfaces a clear rate-limit state with a retry when that's hit.

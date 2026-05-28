@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import { dedupeById } from "./format.js";
 
 // ─── Data hook ──────────────────────────────────────────────────────────────
-// Fetches the user profile + their 30 most recently updated repos, then
-// individually fetches any pinned repos that weren't in that window.
-export function useGitHub(username, pinnedNames) {
+// Fetches the user profile + up to 100 most-recently-updated public repos
+// (GitHub's per-page cap), then drops forks. Surfaces rate-limit, not-found,
+// and generic fetch failures so the UI can render a clean error state with
+// retry. If you ever pass 100 repos, swap this for paginated calls.
+export function useGitHub(username) {
   const [user, setUser] = useState(null);
   const [repos, setRepos] = useState([]);
-  const [pinned, setPinned] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -39,37 +39,14 @@ export function useGitHub(username, pinnedNames) {
         const [userRes, repoRes] = await Promise.all([
           fetch(`https://api.github.com/users/${username}`),
           fetch(
-            `https://api.github.com/users/${username}/repos?sort=updated&per_page=30`
+            `https://api.github.com/users/${username}/repos?sort=updated&per_page=100`
           ),
         ]);
         const userData = await safeJson(userRes);
         const repoData = await safeJson(repoRes);
-
-        const haveNames = new Set(repoData.map((r) => r.name));
-        const missing = pinnedNames.filter((n) => !haveNames.has(n));
-        const settled = await Promise.allSettled(
-          missing.map((n) =>
-            fetch(`https://api.github.com/repos/${username}/${n}`).then((r) =>
-              r.ok ? r.json() : null
-            )
-          )
-        );
-        const extra = settled
-          .filter((p) => p.status === "fulfilled" && p.value)
-          .map((p) => p.value);
-
-        const all = dedupeById([...extra, ...repoData]).filter(
-          (r) => !r.fork || pinnedNames.includes(r.name)
-        );
-        const pinnedOrdered = pinnedNames
-          .map((n) => all.find((r) => r.name === n))
-          .filter(Boolean);
-        const rest = all.filter((r) => !pinnedNames.includes(r.name));
-
         if (cancelled) return;
         setUser(userData);
-        setRepos(rest);
-        setPinned(pinnedOrdered);
+        setRepos(repoData.filter((r) => !r.fork));
         setLoading(false);
       } catch (e) {
         if (cancelled) return;
@@ -82,8 +59,7 @@ export function useGitHub(username, pinnedNames) {
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username, pinnedNames.join("|"), nonce]);
+  }, [username, nonce]);
 
-  return { user, repos, pinned, loading, error, retry };
+  return { user, repos, loading, error, retry };
 }
